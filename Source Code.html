@@ -1,0 +1,505 @@
+<!-- Brant Holt 2013 -->
+
+<!-- Mobile Web Passcode Page
+
+This passcode UI was designed to allow a mobile web application to have a security code to be entered before content could be available. It was used as the passcode page for the mobile control web application made to support my custom built home-automation system.
+-->
+
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0," />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<script src="script/jquery-1.22.1.min.js"></script>
+<script src="script/spin.min.js"></script>
+<meta charset="UTF-8">
+<title>Cover</title>
+<style type="text/css">
+html, body {
+	height:100%;
+	width:100%;
+	margin:0px;
+	padding:0px;
+	background-color:white;
+	}
+#hiddenFields{
+	width: 0;
+	overflow: hidden;
+	position: absolute;
+    left: -200px;
+	}
+.inputBox{
+	opacity:0;
+	filter:alpha(opacity=0);
+	}
+#cover {
+	display:none;
+	height:100%; 
+	width:100%; 
+	background-color:#393b47;
+	background-image:-webkit-radial-gradient(circle cover, #393b47 0%, #1a1822 80%);
+	background-image: -moz-radial-gradient(circle cover, #393b47 0%, #1a1822 80%);
+	background-image: -o-radial-gradient(circle cover, #393b47 0%, #1a1822 80%);
+	background-image: radial-gradient(circle cover, #393b47 0%, #1a1822 80%);
+	z-index:2;
+	}
+#loader {
+	position:absolute;
+	width:100%;
+	top:72px;
+	}
+.pinPadWrapper{
+	position:absolute;
+	top:152px;
+	left:50%;
+	margin-left:-140px;
+	opacity:1;
+	visibility:hidden;
+	}
+.pinPadWrapperMove{
+	position:absolute;
+	top:300px;
+	left:50%;
+	margin-left:-140px;
+	-webkit-animation:pinBoxMove .75s;
+	opacity:0;
+	}	
+.pinPad{
+	width:31px;
+	height:35px;
+	text-align:center;
+	vertical-align:central;
+	border:none;
+	-webkit-box-shadow: inset 0 0 6px#000000;
+	font-size:30px;
+	-webkit-appearance: none;
+    border-radius: 0;
+	}
+.redFlash{
+	width:31px;
+	height:35px;
+	text-align:center;
+	vertical-align:central;
+	border:none;
+	-webkit-box-shadow: inset 0 0 6px#000000;
+    background: white;
+	font-size:30px;
+	-webkit-appearance: none;
+    border-radius: 0;
+	-webkit-animation:flashRed .5s;
+}
+	
+.nameFieldWrapper{
+	position:absolute;
+	top:300px;
+	left:50%;
+	margin-left:-134px;
+	visibility:hidden;
+	}
+.nameFieldWrapperMove{
+	position:absolute;
+	top:152px;
+	left:50%;
+	margin-left:-134px;
+	-webkit-animation:nameFieldMove .9s;
+	visibility:visible;
+	}
+#nametxtBox{
+	font-family: -apple-system-font;
+	width:238px;
+	height:35px;
+	text-align:center;
+	vertical-align:central;
+	border:none;
+	-webkit-box-shadow: inset 0 0 6px#000000;
+    background: white;
+	font-size:30px;
+	-webkit-appearance: none;
+    border-radius: 0;
+	}
+.welcome {
+	width:100%;
+	font-family: -apple-system-font;
+	font-weight: 100;
+	font-size: 50px;
+	color:white;
+	position:absolute;
+	top:200px;
+	display:inline-block;
+	text-align:center;
+	visibility:hidden;
+	-webkit-backface-visibility: hidden;
+	}
+.welcomeMoveUp{
+	width:100%;
+	display:inline-block;
+	text-align:center;
+	font-family: -apple-system-font;
+	font-weight: 100;
+	font-size: 35px;
+	color:white;
+	position:absolute;
+	top:21px;
+	-webkit-animation:headerToField .9s;
+	-webkit-backface-visibility: hidden;
+}
+
+.passcodelbl {
+	font-family: -apple-system-font;
+	font-size: 20px;
+	font-weight:200;
+	width:100%;
+	display:inline-block;
+	color:white;
+	position:absolute;
+	top:118px;
+	text-align:center;
+	visibility:hidden;
+	}
+.passcodelblMove {
+	font-family: -apple-system-font;
+	font-size: 20px;
+	font-weight:200;
+	width:100%;
+	display:inline-block;
+	color:white;
+	position:absolute;
+	top:118px;
+	text-align:center;
+	visibility:visible;
+	margin-left:0px;
+	-webkit-animation:passcodeLblMove .9s;
+	}
+@-webkit-keyframes headerToField
+{
+0%   {top:200px;font-size:50px;}
+35%   {top:220px; font-size:50px;}
+100%  {top:21px;font-size:35px;}
+}
+
+@-webkit-keyframes flashRed
+{
+0%   {background:white;}
+50%   {background:red;}
+100%  {Background:white;}
+}
+
+@-webkit-keyframes pinBoxMove
+{
+0%  	{top:152px;opacity:1;}
+30% 	{top:132px;opacity:1;}
+99% 	{opacity:1;}
+100%  	{top:300px; opacity:0;}
+}
+
+@-webkit-keyframes passcodeLblMove
+{
+0%  	{display:none; margin-left:500px;color:white;visibility:hidden;}
+1% 		{display:inline-block;visibility:visible;margin-left:500px;}
+100%  	{display:inline-block;margin-left:0px;visibility:visible;color:white;}
+}
+
+@-webkit-keyframes nameFieldMove
+{
+0%  	{top:300px;visiblilty:hidden;}
+1%	 	{visibility:visible;}
+70% 	{top:132px;visibility:visible;}
+100%  	{top:152px;visibility:visible;}
+}
+</style>
+</head>
+
+<body onLoad="renderPage();">
+<div id="cover">
+<div id="loader"></div>
+<div id="welcome" class="welcome">Welcome</div>
+<div id="passcodelbl" class="passcodelbl">Enter the passcode</div>
+
+<div id="pinPadWrapper" class="pinPadWrapper">
+	<input type="password" class="pinPad" id="pinPad_1" maxlength="1" onClick="pinNumFocus();" readonly/>&nbsp;&nbsp;
+    <input type="password" class="pinPad" id="pinPad_2" maxlength="1" onClick="pinNumFocus();" readonly>&nbsp;&nbsp;
+    <input type="password" class="pinPad" id="pinPad_3" maxlength="1" onClick="pinNumFocus();" readonly>&nbsp;&nbsp;
+    <input type="password" class="pinPad" id="pinPad_4" maxlength="1" onClick="pinNumFocus();" readonly>
+</div>
+<div id="nameFieldWrapper" class="nameFieldWrapper">
+	<input type="text" name="firstName" id="nametxtBox" autocomplete="off" maxlength="16"/>
+</div>
+
+<div id="hiddenFields">
+<input type="text" pattern="[0-9]*" class="inputBox" id="pinNum" maxlength="4" onKeyUp="pinNum();" autocomplete="off"/>
+</div>
+
+</div>
+
+<script type="text/javascript">
+var passed1 = false, passed2 = false;
+var cookieSet = false, userID = "", spinner;
+var loader = document.getElementById("loader");
+var pinNumField = document.getElementById("pinNum");
+var labelElem = document.getElementById("passcodelbl");
+
+checkCookie();
+function getCookie(c_name){
+var c_value = document.cookie;
+var c_start = c_value.indexOf(" " + c_name + "=");
+if (c_start == -1){
+  c_start = c_value.indexOf(c_name + "=");
+  }
+if (c_start == -1){
+  c_value = null;
+  } else {
+  	c_start = c_value.indexOf("=", c_start) + 1;
+  	var c_end = c_value.indexOf(";", c_start);
+  	if (c_end == -1){
+    	c_end = c_value.length;
+    	}
+  	c_value = unescape(c_value.substring(c_start,c_end));
+  	}
+return c_value;
+}
+
+function setCookie(c_name,value,exdays){
+var exdate=new Date();
+exdate.setDate(exdate.getDate() + exdays);
+var c_value=escape(value) + ((exdays==null) ? "" : "; expires="+exdate.toUTCString());
+document.cookie=c_name + "=" + c_value;
+}
+
+function checkCookie(){
+var id=getCookie("id");
+if (id!=null && id!="") {
+  //window.location.href = "index.php";
+  } else {
+  	cookieSet = false;
+	//setCookie('id', '/*mysql highest id+1*/', 365);
+  }
+}
+
+function pinNum(){
+	var input = pinNumField.value;
+	var len = input.length;
+	var elemId = "";
+	if (len>0){
+		for (var x = 0; x < len; x++){
+    		var c = input.charAt(x);
+			elemId = "pinPad_"+(x+1);
+  			document.getElementById(elemId).value=c;
+		}
+		for (var y = 0; y < (4-len); y++){
+			elemId = "pinPad_"+(4-y);
+			document.getElementById(elemId).value="";
+		}
+	} else {
+		for (var y = 0; y < 4; y++){
+			elemId = "pinPad_"+(y+1);
+			document.getElementById(elemId).value="";
+		}
+	}
+	if(len == 4 && passed1 == false){
+			spinner.spin(loader);
+			$("#passcodelbl").fadeOut("slow", function(){});
+			checkPinServer();
+		} 
+}
+
+function pinNumFocus(){
+	pinNumField.focus();
+	pinNumField.setSelectionRange(4,4);
+	}
+	
+function firstName(){
+	/*var input = pinNumField.value;
+	var len = input.length;
+	var elemId = "";
+	if (len>0){
+		for (var x = 0; x < len; x++){
+    		var c = input.charAt(x);
+			elemId = "pinPad_"+(x+1);
+  			document.getElementById(elemId).value=c;
+		}
+		for (var y = 0; y < (4-len); y++){
+			elemId = "pinPad_"+(4-y);
+			document.getElementById(elemId).value="";
+		}
+	} else {
+		for (var y = 0; y < 4; y++){
+			elemId = "pinPad_"+(y+1);
+			document.getElementById(elemId).value="";
+		}
+	}
+	if(len == 4 && passed1 == false){
+			spinner.spin(loader);
+			$("#passcodelbl").fadeOut("slow", function(){});
+			checkPinServer();
+		} */
+}
+
+function checkPinServer(){
+	setTimeout(function(){
+		spinner.stop();
+		flashPinBox();
+		pinNumField.removeAttribute('readonly');
+		pinNumField.value = "";
+		labelElem.innerHTML = "Wrong passcode. Try again";
+		labelElem.style.color = "red";
+		$("#passcodelbl").fadeIn("slow", function(){});
+		pinNum();
+	},750);
+	/*$.ajax({ url: 'checkPinServer.php',
+		data: {pin: pinNumField.value},
+		type: 'POST',
+		async: true,
+		timeout: '3999',
+		success: function(result) {
+					if(result != "PASSCODE_MATCH" && passed1 == false){ //passcode unsuccessful
+						spinner.stop();
+						flashPinBox();
+						pinNumField.removeAttribute('readonly');
+						pinNumField.value = "";
+						labelElem.innerHTML = "Wrong passcode. Try again";
+						labelElem.style.color = "red";
+						$("#passcodelbl").fadeIn("slow", function(){});
+						pinNum();
+					} else { //passcode successful
+						passed1 = true;
+						pinNumField.removeAttribute('onKeyUp');
+						$("#pinPad_4").unbind();
+						spinner.stop();
+						document.getElementById("pinPadWrapper").setAttribute('class', 'pinPadWrapperMove');
+						pinNumField.setAttribute('readonly', 'readonly');
+						labelElem.setAttribute('class','passcodelblMove');
+						//do same error handling as above for pin
+						//when accepted set cookies
+						//stop spinner, unfocus, and fadeOut everything (same time) except welcome
+						//welcome moves down (make sure gets unbined and rebinded) and meets with correct name and id_pic
+						//load spinner again until everything loads(at bottom of page)
+						//remove all files for login
+						//open 'cover' half and half move vertically up and down to reveal remote app
+					}
+				},
+		error: function() { //passcode couldnt be retrieved
+				spinner.stop();
+				flashPinBox();
+				pinNumField.removeAttribute('readonly');
+				pinNumField.value = "";
+				labelElem.innerHTML = "An error occured. Reload the page";
+				labelElem.style.color = "red";
+				$("#passcodelbl").fadeIn("slow", function(){});
+				pinNum();
+			}
+		});
+		*/
+}
+
+function checkNameServer(){
+	/*$.ajax({ url: 'checkPinServer.php',
+		data: {pin: pinNumField.value},
+		type: 'POST',
+		async: true,
+		timeout: '3999',
+		success: function(result) {
+					if(result != "PASSCODE_MATCH" && passed1 == false){ //passcode unsuccessful
+						spinner.stop();
+						flashPinBox();
+						pinNumField.removeAttribute('readonly');
+						pinNumField.value = "";
+						labelElem.innerHTML = "Wrong passcode. Try again";
+						labelElem.style.color = "red";
+						$("#passcodelbl").fadeIn("slow", function(){});
+						pinNum();
+					} else { //passcode successful
+						passed1 = true;
+						pinNumField.removeAttribute('onKeyUp');
+						$("#pinPad_4").unbind();
+						spinner.stop();
+						document.getElementById("pinPadWrapper").setAttribute('class', 'pinPadWrapperMove');
+						pinNumField.setAttribute('readonly', 'readonly');
+						//slide lbl in from right to left
+						$("#nameFieldWrapper").attr('class', 'nameFieldWrapperMove');//move name field up
+						//do same error handling as above for pin
+						//when accepted set cookies
+						//stop spinner, unfocus, and fadeOut everything (same time) except welcome
+						//welcome moves down (make sure gets unbined and rebinded) and meets with correct name and id_pic
+						//load spinner again until everything loads(at bottom of page)
+						//remove all files for login
+						//open 'cover' half and half move vertically up and down to reveal remote app
+					}
+				},
+		error: function() { //passcode couldnt be retrieved
+				spinner.stop();
+				flashPinBox();
+				pinNumField.removeAttribute('readonly');
+				pinNumField.value = "";
+				labelElem.innerHTML = "An error occured. Reload the page";
+				labelElem.style.color = "red";
+				$("#passcodelbl").fadeIn("slow", function(){});
+				pinNum();
+			}
+		});*/
+}
+
+function flashPinBox(){
+		$("#pinPad_1").attr('class', 'redFlash');
+		$("#pinPad_2").attr('class', 'redFlash');
+		$("#pinPad_3").attr('class', 'redFlash');
+		$("#pinPad_4").attr('class', 'redFlash');
+}
+
+function loadSpinner(){
+var opts = {
+	lines: 11, // The number of lines to draw
+	length: 7, // The length of each line
+	width: 3, // The line thickness
+	radius: 8, // The radius of the inner circle
+	corners: 1, // Corner roundness (0..1)
+	rotate: 0, // The rotation offset
+	direction: 1, // 1: clockwise, -1: counterclockwise
+	color: '#FFFFFF', // #rgb or #rrggbb or array of colors
+	speed: 1.6, // Rounds per second
+	trail: 76, // Afterglow percentage
+	shadow: false, // Whether to render a shadow
+	hwaccel: true, // Whether to use hardware acceleration
+	className: 'spinner', // The CSS class to assign to the spinner
+	zIndex: 2e9, // The z-index (defaults to 2000000000)
+	top: '19px', // Top position relative to parent in px
+	left: '160px' // Left position relative to parent in px
+	};
+spinner = new Spinner(opts).spin(loader);
+}
+	
+function renderPage(){
+//cookies check, background cover, ajax, welcome text: loading order
+loadSpinner();
+spinner.stop();
+	$("#welcome").bind('webkitAnimationEnd', function() {
+		$("#pinPadWrapper").css('visibility','visible').hide().fadeIn("slow", function(){
+			$("#welcome").unbind();
+			pinNumFocus();
+			$("#passcodelbl").delay(200).css('visibility','visible').hide().fadeIn("slow", function(){});
+		});
+	});
+	
+	$("#pinPad_4").bind('webkitAnimationEnd', function() { 
+		pinNumFocus();
+		$("#pinPad_1").attr('class', 'pinPad');
+		$("#pinPad_2").attr('class', 'pinPad');
+		$("#pinPad_3").attr('class', 'pinPad');
+		$("#pinPad_4").attr('class', 'pinPad'); 
+	}); 
+	
+	$("#passcodelbl").bind('webkitAnimationEnd', function() { 
+		//$("#nameFieldWrapper").attr('class', 'nameFieldWrapperMove');
+	}); 
+
+	$("#cover").fadeIn("slow", function(){
+		$("#welcome").css('visibility','visible').hide().fadeIn("slow", function(){
+			if(cookieSet == false){
+				$("#welcome").attr('class', 'welcomeMoveUp');
+			}
+		});
+	});
+}
+</script>
+</body>
+</html>
